@@ -18,7 +18,13 @@ document.querySelector('.calculator').appendChild(div);
 let a = 0;
 let i = 0;
 let func1 = suma;
-
+let res = null;
+/*
+div.childNodes[3].value = suma;
+div.childNodes[7].value = diff;
+div.childNodes[11].value = mult;
+div.childNodes[14].value = divi;
+*/
 
 function suma(a) {
     return function (b) {
@@ -49,53 +55,77 @@ function calc(func) {
     }
 }
 
+ const calculate = (item) => {
+    output.innerHTML= calc(func1)(a)(Number(output.innerHTML));
+    a = Number(output.innerHTML);
+    console.log(a);
+    output.innerHTML= '';
+    switch(item.value) {
+        case 'C': 
+        output.innerHTML='';
+        a = 0;
+        func1 = suma;
+        break;
+      
+        case '+':  
+        func1 = suma;
+        break;
+        
+        case '-':  
+        func1 = diff;
+        break;
+
+        case '*':  
+        func1 = mult;
+        break;
+
+        case '/':  
+        func1 = divi;
+        break;
+
+        case '=':  
+        res = a;
+        output.innerHTML=a;
+        a = 0;
+        break;
+      }                                  
+ }
+
 
 document.querySelectorAll('button').forEach(button => {  //Находим созданные кнопки и добавляем к ним обработчик события «клик»:
     button.addEventListener('click', function () {        // по клику вызывается функция со значением кнопки в качестве параметра
         if (output.innerHTML.length < 16) {
-            if (this.value < 10){                          //если число
+            if (res !==null) {
+                output.innerHTML = Number(this.value);
+                res = null;
+            } else if (this.value < 10){                          //если число
                 output.append(this.value);                 // добавляем введенное значение
-                i = +output.innerHTML;
+                i = Number(output.innerHTML);
                 output.innerHTML=i;
                 console.log(output.innerHTML);
             }
             else {
-                output.innerHTML= calc(func1)(a)(+output.innerHTML);
-                a = +output.innerHTML;
-                console.log(a);
-                output.innerHTML= '';
-                switch(this.value) {
-                    case 'C': 
-                    output.innerHTML='';
-                    a = 0;
-                    break;
-                  
-                    case '+':  
-                    func1 = suma;
-                    break;
-                    
-                    case '-':  
-                    func1 = diff;
-                    break;
-
-                    case '*':  
-                    func1 = mult;
-                    break;
-
-                    case '/':  
-                    func1 = divi;
-                    break;
-
-                    case '=':  
-                    output.innerHTML=a;
-
-                      break;
-                  }                                     
+                calculate(this);  
             }
         }                           // функция принимает значение кнопки или ключ клавиши
     })
 })
-
+document.addEventListener('keydown', event => {
+    if (output.innerHTML.length < 16) {
+        if (res !==null) {
+            output.innerHTML = Number(event.key);
+            res = null;
+        } else if (event.key < 10){                          //если число
+            output.append(event.key);                 // добавляем введенное значение
+            i = Number(output.innerHTML);
+            output.innerHTML=i;
+            console.log(output.innerHTML);
+        }
+        else {
+            calculate(event.key);  
+        }
+    }
+})
 
 
 
